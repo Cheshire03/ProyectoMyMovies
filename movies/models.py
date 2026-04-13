@@ -46,6 +46,10 @@ class MovieCredit(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
 
+class MovieLike(models.Model):
+    user= models.ForeignKey(user, on_delete=models.CASCADE)
+    movie= models.ForeignKey(Movie, on_delete=models.CASCADE)
+    review=models.TextField(black=True)
 
 class MovieReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

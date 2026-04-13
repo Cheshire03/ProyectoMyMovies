@@ -1,9 +1,21 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from movies.models import Movie, MovieReview
-from movies.forms import MovieReviewForm
+from django.http import HttpResponse, HttpResponseRedirect
+from movies.models import Movie, MovieReview, Person, MovieLike
+from movies.forms import MovieReviewForm, MovieCommentForm
 
 # Create your views here.
+
+def all_movies(request):
+    movies=Movie.objects.all()
+    context={'movies':movies,'message':'welcome'}
+    return render(request,'movies/allmovies.html',context=context)
+
+def saludo(request,veces):
+    saludo='Hola ' *veces
+    personas = Person.objects.all()
+    context={'saludo':saludo,'lista':personas}
+    return render(request,'movies/saludo.html',context=context)
+
 def index(request):
     movies = Movie.objects.all()
     context = { 'movies':movies, 'message':'welcome' }
@@ -18,6 +30,29 @@ def movie(request, movie_id):
 def movie_reviews(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
     return render(request,'movies/reviews.html', context={'movie':movie } )
+
+def add_like(request, movie_id):
+    form= None
+    movie= Movie.objects.get(id=movie_id)
+
+    if request.method == 'POST':
+        form = MovieCommentForm(request.POST)
+        if form.is_valid():
+            review = form.cleaned_data['review']
+            movie_comment = MovieLike(
+                    movie=movie,
+                    rating=rating,
+                    title=title,
+                    review=review,
+                    user=request.user)
+            movie_review.save()
+            return HttpResponse(status=204,
+                                headers={'HX-Trigger': 'listChanged'})
+    else:
+        form = MovieCommentForm()
+        return render(request,
+                  'movies/movie_comment_form.html',
+                  {'form': form, 'movie':movie})
     
 def add_review(request, movie_id):
     form = None
