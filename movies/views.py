@@ -39,15 +39,12 @@ def add_like(request, movie_id):
         form = MovieCommentForm(request.POST)
         if form.is_valid():
             review = form.cleaned_data['review']
-            movie_comment = MovieLike(
+            movie_like = MovieLike(
                     movie=movie,
-                    rating=rating,
-                    title=title,
                     review=review,
                     user=request.user)
-            movie_review.save()
-            return HttpResponse(status=204,
-                                headers={'HX-Trigger': 'listChanged'})
+            movie_like.save()
+            return HttpResponseRedirect('/movies/')
     else:
         form = MovieCommentForm()
         return render(request,
