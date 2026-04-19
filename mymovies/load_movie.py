@@ -98,10 +98,20 @@ def add_movie(movie_id):
               budget,
               tmdb_id,
               revenue,
-              poster_path) values  (%s, %s, %s, %s, %s, %s, %s, %s);'''
+              poster_path,
+              backdrop_path) values  (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (tmdb_id) DO UPDATE SET
+            title = EXCLUDED.title,
+            overview = EXCLUDED.overview,
+            release_date = EXCLUDED.release_date,
+            running_time = EXCLUDED.running_time,
+            budget = EXCLUDED.budget,
+            revenue = EXCLUDED.revenue,
+            poster_path = EXCLUDED.poster_path,
+            backdrop_path = EXCLUDED.backdrop_path;'''
 
     movie_tuple = (m['title'], m['overview'], date_time.astimezone(timezone.utc), m['runtime'], 
-                   m['budget'] , movie_id, m['revenue'], m['poster_path'] )
+                   m['budget'] , movie_id, m['revenue'], m['poster_path'], m['backdrop_path'] )
     print(movie_tuple)
 
 
@@ -113,10 +123,21 @@ def add_movie(movie_id):
               budget,
               tmdb_id,
               revenue,
-              poster_path) values  (%s, %s, %s, %s, %s, %s, %s, %s);'''
+              poster_path,
+              backdrop_path) values  (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (tmdb_id) DO UPDATE SET
+            title = EXCLUDED.title,
+            overview = EXCLUDED.overview,
+            release_date = EXCLUDED.release_date,
+            running_time = EXCLUDED.running_time,
+            budget = EXCLUDED.budget,
+            revenue = EXCLUDED.revenue,
+            poster_path = EXCLUDED.poster_path,
+            backdrop_path = EXCLUDED.backdrop_path;'''
+    
 
     movie_tuple = (m['title'], m['overview'], date_time.astimezone(timezone.utc), m['runtime'], 
-                   m['budget'] , movie_id, m['revenue'], m['poster_path'] )
+                   m['budget'] , movie_id, m['revenue'], m['poster_path'], m['backdrop_path'] )
     print(movie_tuple)
     cur.execute(sql, movie_tuple)
 

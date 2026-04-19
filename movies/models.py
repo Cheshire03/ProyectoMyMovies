@@ -31,9 +31,10 @@ class Movie(models.Model):
     release_date = models.DateField()
     running_time = models.IntegerField()
     budget = models.IntegerField(blank=True, null=True)
-    tmdb_id = models.IntegerField(blank=True, null=True)
+    tmdb_id = models.IntegerField(unique=True)
     revenue = models.IntegerField(blank=True, null=True)
     poster_path = models.URLField(blank=True, null=True)
+    backdrop_path = models.URLField(blank=True, null=True)
     genres = models.ManyToManyField(Genre)
     credits = models.ManyToManyField(Person, through='MovieCredit')
 

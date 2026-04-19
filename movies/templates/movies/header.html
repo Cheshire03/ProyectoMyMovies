@@ -1,11 +1,11 @@
 {% load static %}
 <nav class="bg-white shadow">
   <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
-    <div class="flex h-16 justify-between">
+    <div class="flex py-0 justify-between">
       <div class="flex px-2 lg:px-0">
         <div class="flex flex-shrink-0 items-center">
           <a href="/">
-            <img class="h-12 w-auto" src="{% static 'movies/film.png' %}" alt="logo">
+            <img class="my-1 h-12 w-auto" src="{% static 'movies/film.png' %}" alt="logo">
           </a>
         </div>
         <div class="hidden lg:ml-6 lg:flex lg:space-x-8">
@@ -17,7 +17,7 @@
                         border-transparent
                         {% endif %}
                         px-1 
-                        pt-1 text-sm font-medium text-blue-900">My Movies</a>
+                        pt-1 text-sm font-semibold text-blue-900">My Movies</a>
         {% if user.is_authenticated %}
           <a href="/collections" class="inline-flex items-center border-b-2 
                         {% if request.path == '/collections/' %}
@@ -27,7 +27,7 @@
                         {% endif %}
 
                         px-1
-                        pt-1 text-sm font-medium text-gray-500 hover:border-gray-300
+                        pt-1 text-sm font-semibold text-gray-500 hover:border-gray-300
                         hover:text-gray-700">Mis Peliculas</a>
 
         {% endif %}
@@ -35,7 +35,7 @@
       </div>
       <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
         <div class="w-full max-w-lg lg:max-w-xs">
-        <form method="get" action="/artworks/search" class="mb-3">
+        <form method="get" action="/artworks/search">
           <label for="search" class="sr-only">Buscar</label>
           <div class="relative">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -60,18 +60,18 @@
 
     {% if user.is_authenticated %}
         <div class="relative ml-4 flex-shrink-0">
-          <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500"> Hola, {{user.username}} </a>
+          <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-semibold text-gray-500"> Hola, {{user.username}} </a>
         </div>
         <div class="relative ml-4 flex-shrink-0">
-          <a href="/users/logout" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-sky-700">Termina Sesión</a>
+          <a href="/users/logout" class="inline-flex items-center px-1 pt-1 text-sm font-semibold text-sky-700">Cerrar Sesión</a>
         </div>
     {% else %}
         <div class="relative ml-4 flex-shrink-0">
           <a href="/accounts/register/" class="inline-flex items-center
-                        px-1 pt-1 text-sm font-medium text-sky-700"> Regístrate </a>
+                        px-1 pt-1 text-sm font-semibold text-sky-700"> Regístrate </a>
         </div>
         <div class="relative ml-4 flex-shrink-0">
-          <a href="/users/login" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-sky-700">Inicia Sesión</a>
+          <a href="/users/login" class="inline-flex items-center px-1 pt-1 text-sm font-semibold text-sky-700">Iniciar Sesión</a>
         </div>
     {% endif %}
       </div>
