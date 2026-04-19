@@ -90,45 +90,47 @@ def add_movie(movie_id):
     date_obj = date.fromisoformat(m['release_date']) 
     date_time = datetime.combine(date_obj, datetime.min.time())
 
+    # sql = '''INSERT INTO movies_movie 
+    #          (title,
+    #           overview,
+    #           release_date,
+    #           running_time,
+    #           budget,
+    #           tmdb_id,
+    #           revenue,
+    #           poster_path,
+    #           backdrop_path) values  (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    #         ON CONFLICT (tmdb_id) DO UPDATE SET
+    #         title = EXCLUDED.title,
+    #         overview = EXCLUDED.overview,
+    #         release_date = EXCLUDED.release_date,
+    #         running_time = EXCLUDED.running_time,
+    #         budget = EXCLUDED.budget,
+    #         revenue = EXCLUDED.revenue,
+    #         poster_path = EXCLUDED.poster_path,
+    #         backdrop_path = EXCLUDED.backdrop_path;'''
+
+    # movie_tuple = (m['title'], m['overview'], date_time.astimezone(timezone.utc), m['runtime'], 
+    #                m['budget'] , movie_id, m['revenue'], m['poster_path'], m['backdrop_path'] )
+    # print(movie_tuple)
+
+
     sql = '''INSERT INTO movies_movie 
              (title,
               overview,
               release_date,
+              origin_country,
               running_time,
               budget,
               tmdb_id,
               revenue,
               poster_path,
-              backdrop_path) values  (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+              backdrop_path) values  (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (tmdb_id) DO UPDATE SET
             title = EXCLUDED.title,
             overview = EXCLUDED.overview,
             release_date = EXCLUDED.release_date,
-            running_time = EXCLUDED.running_time,
-            budget = EXCLUDED.budget,
-            revenue = EXCLUDED.revenue,
-            poster_path = EXCLUDED.poster_path,
-            backdrop_path = EXCLUDED.backdrop_path;'''
-
-    movie_tuple = (m['title'], m['overview'], date_time.astimezone(timezone.utc), m['runtime'], 
-                   m['budget'] , movie_id, m['revenue'], m['poster_path'], m['backdrop_path'] )
-    print(movie_tuple)
-
-
-    sql = '''INSERT INTO movies_movie 
-             (title,
-              overview,
-              release_date,
-              running_time,
-              budget,
-              tmdb_id,
-              revenue,
-              poster_path,
-              backdrop_path) values  (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (tmdb_id) DO UPDATE SET
-            title = EXCLUDED.title,
-            overview = EXCLUDED.overview,
-            release_date = EXCLUDED.release_date,
+            origin_country = EXCLUDED.origin_country,
             running_time = EXCLUDED.running_time,
             budget = EXCLUDED.budget,
             revenue = EXCLUDED.revenue,
@@ -136,7 +138,7 @@ def add_movie(movie_id):
             backdrop_path = EXCLUDED.backdrop_path;'''
     
 
-    movie_tuple = (m['title'], m['overview'], date_time.astimezone(timezone.utc), m['runtime'], 
+    movie_tuple = (m['title'], m['overview'], date_time.astimezone(timezone.utc), m['origin_country'], m['runtime'], 
                    m['budget'] , movie_id, m['revenue'], m['poster_path'], m['backdrop_path'] )
     print(movie_tuple)
     cur.execute(sql, movie_tuple)

@@ -2,67 +2,82 @@
 
 {% block content %}
 <article>
- <div class="container flex ">
-    <div class="overflow-hidden rounded-lg bg-white shadow m-6">
-      <div class="">
-          <div class="">
-            <img
-              class="block rounded-lg object-cover object-center h-450 w-300"
-              src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{movie.poster_path}}" alt="{{movie.title}}" />
-          </div>
-      </div>
-      <div class="bg-gray-50 ">
-          <div  class="text-center flex flex-col items-center leading-tight"> 
-            <p class="text-gray-600  font-light"> Data from: </p>
-            <a href="https://www.tmdb.org{{artwork.path}}" class="overflow-hidden
-                        text-ellipsis text-sky-600 font-bold"> tmdb.org{{artwork.path}} </a>
-          </div>
-      </div>
+  <div class="relative w-full min-h-screen overflow-hidden">
+
+    <!-- Background image (sin oscurecer) -->
+    <div class="absolute inset-0">
+      <img src="https://image.tmdb.org/t/p/original{{movie.backdrop_path}}" 
+           class="w-full h-full object-cover" />
     </div>
- <div class="overflow-hidden w-full h-full">
-    <div class="">
-          <div  class=" "> 
-            <p class="block overflow-hidden
-                        text-ellipsis dark:text-gray-200 text-4xl font-bold"> {{movie.title}} ({{movie.release_date|date:"Y"}}) </p>
-                    <p class="text-gray-600 text-xs font-thin"> 
-              {% for g in movie.genres.all %} 
-              {{g}} 
-              {% if not forloop.last %}
-              -
-              {% endif %}
-              {%endfor%}  </p>
-              <div class="flex">
-                {% if user.is_authenticated %}
-                <a class="text-blue-600 text-sm"   
-                 hx-get="/movies/movie_review/add/{{movie.id}}" hx-target="body" hx-swap="beforeend"  href="#">reviews</a> 
-                 {% endif %}
-                <a class="text-red-600 text-sm" href="#">like</a> 
-              </div> 
-            
-            <h1 class="text-gray-600 text-base font-semibold">Overview</h1>
-            <p class="text-gray-500 text-sm font-normal font-sans">{{ movie.overview }}</p>
-            <p class="text-gray-600 text-sm font-semibold"> Credits:
-               <p class="text-gray-600 text-sm  font-thin">
-              {% for c in movie.credits.all %} 
-              {{c}} {% if not forloop.last %} - {% endif %}
-              {%endfor%}  
-              </p> 
-           <p class="block overflow-hidden
-                        text-ellipsis dark:text-gray-200 text-xl font-bold"> Reseñas: </p>
-            <div hx-trigger="listChanged from:body" hx-get="{% url 'movie_reviews' movie.id  %}" hx-target="this" >
-           
-            
-            {% include "movies/reviews.html" %}
-            
-                  
-            </div>
- 
-          
-          </div>
-        
-            
-      </div>
+
+    <!-- Tinte estilo TMDB: gradiente desde el color dominante a la derecha, negro a la izquierda -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(0,0,0,0.95) 40%, {{ bg_color | slice:':-1' }}, 0.7) 100%);">
     </div>
- </div>
+
+    <div class="relative flex w-full px-10 py-8 items-start text-white gap-8">
+
+      <!-- POSTER -->
+      <div class="rounded-xl overflow-hidden bg-white w-80 flex-shrink-0">
+        <img class="w-full object-cover" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{movie.poster_path}}"
+          alt="{{movie.title}}" />
+        <div class="bg-gray-50 pb-1 text-center flex flex-col items-center leading-tight">
+          <p class="text-gray-600 font-light">Data from:</p>
+          <a href="https://www.tmdb.org{{artwork.path}}" class="text-sky-600 font-bold">
+            tmdb.org{{artwork.path}}
+          </a>
+        </div>
+      </div>
+
+      <!-- TEXTO -->
+      <div class="flex-1">
+
+        <p class="text-4xl font-bold">
+          {{movie.title}} ({{movie.release_date|date:"Y"}})
+        </p>
+        <div class="flex items-center gap-2 text-sm pt-1 pb-4">
+          <span>{{ movie.release_date|date:"d/m/Y" }}</span>
+          <span>•</span>
+
+          <span>
+            {% for g in movie.genres.all %}
+            {{ g }}{% if not forloop.last %} / {% endif %}
+            {% endfor %}
+          </span>
+
+          <span>•</span>
+          <span>{{ movie.running_time }}min</span>
+        </div>
+
+        <div class="flex gap-4">
+          {% if user.is_authenticated %}
+          <a class="text-blue-400 text-sm" hx-get="/movies/movie_review/add/{{movie.id}}" hx-target="body"
+            hx-swap="beforeend" href="#">Review</a>
+          {% endif %}
+
+          <a class="text-red-400 text-sm">Like</a>
+          <a href="/movies/movie_like/add/{{movie.id}}" class="text-green-400 text-sm">
+            Comentar
+          </a>
+        </div>
+
+        <h1 class="text-lg font-bold pt-4 pb-1">Overview</h1>
+        <p class="text-base">{{ movie.overview }}</p>
+
+        <h1 class="text-lg font-bold pt-6 pb-1">Credits</h1>
+        <p class="text-sm font-thin">
+          {% for c in movie.credits.all %}
+          {{c}}{% if not forloop.last %} - {% endif %}
+          {% endfor %}
+        </p>
+        <p class="block overflow-hidden text-ellipsis 
+                text-lg font-bold pt-6"> Reseñas: </p>
+        <div hx-trigger="listChanged from:body" hx-get="{% url 'movie_reviews' movie.id %}" hx-target="this">
+          {% include "movies/reviews.html" %}
+
+        </div>
+
+      </div>
+
+    </div>
 </article>
 {% endblock content %}

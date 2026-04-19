@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from movies.models import Movie, MovieReview, Person, MovieLike
 from movies.forms import MovieReviewForm, MovieCommentForm
+from movies.utils import get_dominant_color
 
 # Create your views here.
 
@@ -23,8 +24,10 @@ def index(request):
     
 def movie(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
+    bg_color = get_dominant_color(
+    f"https://image.tmdb.org/t/p/w500{movie.backdrop_path}")
     review_form = MovieReviewForm()
-    context = { 'movie':movie, 'saludo':'welcome', 'review_form':review_form }
+    context = { 'movie':movie, 'saludo':'welcome', 'review_form':review_form ,'bg_color': bg_color }
     return render(request,'movies/movie.html', context=context )
 
 def movie_reviews(request, movie_id):
