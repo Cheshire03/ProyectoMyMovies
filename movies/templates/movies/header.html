@@ -19,16 +19,15 @@
                         px-1 
                         pt-1 text-sm font-semibold text-blue-900">My Movies</a>
         {% if user.is_authenticated %}
-          <a href="/collections" class="inline-flex items-center border-b-2 
-                        {% if request.path == '/collections/' %}
-                        border-sky-600 
-                        {% else %} 
-                        border-transparent
-                        {% endif %}
-
-                        px-1
-                        pt-1 text-sm font-semibold text-gray-500 hover:border-gray-300
-                        hover:text-gray-700">Mis Peliculas</a>
+          <a href="/movies/my_movies/" class="inline-flex items-center border-b-2 
+              {% if request.path == '/movies/my_movies/' %}
+              border-sky-600 
+              {% else %} 
+              border-transparent
+              {% endif %}
+              px-1
+              pt-1 text-sm font-semibold text-gray-500 hover:border-gray-300
+              hover:text-gray-700">Mis Peliculas</a>
 
         {% endif %}
         </div>
@@ -47,7 +46,7 @@
                             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
                             focus:ring-inset focus:ring-indigo-600 
                             sm:text-sm sm:leading-6" placeholder="Buscar" type="search" 
-                        {% if search_value != None %} 
+                        {% if search_value %}
                             value="{{ search_value|stringformat:'s' }}"
                         {% endif %} >
 

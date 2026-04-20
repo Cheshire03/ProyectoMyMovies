@@ -30,7 +30,7 @@
             <img src="{% static 'movies/knightley.jpg' %}" alt="" class="size-12 rounded-full bg-gray-50">
             <div class="text-sm/6">
               <p class="font-semibold text-gray-900">
-                <a href="#">
+                <a href="/movies/user/{{ review.user.id }}/reviews/" class="font-semibold text-sky-600 hover:underline">
                   <span class="absolute inset-0"></span>
                   {{review.user}}
                 </a>

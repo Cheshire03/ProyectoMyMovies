@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from movies.models import Movie, MovieReview, Person, MovieLike, MovieCredit
 from movies.forms import MovieReviewForm, MovieCommentForm
 from movies.utils import get_dominant_color
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 # Create your views here.
 
 def all_movies(request):
@@ -39,33 +41,42 @@ def movie(request, movie_id):
         movie=movie,
         job__name='Acting'
     ).order_by('order')[:10]
+    user_liked=False
+    if request.user.is_authenticated:
+        user_liked = MovieLike.objects.filter(user=request.user, movie=movie).exists()
     review_form = MovieReviewForm()
-    context = { 'movie':movie, 'saludo':'welcome', 'review_form':review_form ,'bg_color': bg_color, 'credits':credits }
+    context = { 'movie':movie, 'saludo':'welcome', 'review_form':review_form ,'bg_color': bg_color, 'credits':credits, 'user_liked': user_liked, }
     return render(request,'movies/movie.html', context=context )
+
+def my_movies(request):
+    liked_movies = MovieLike.objects.filter(user=request.user).order_by('-created_at')
+    recent_reviews = MovieReview.objects.filter(user=request.user).order_by('-created_at')[:4]
+    context = {
+        'liked_movies': liked_movies,
+        'recent_reviews': recent_reviews,
+    }
+    return render(request, 'movies/my_movies.html', context=context)
 
 def movie_reviews(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
     return render(request,'movies/reviews.html', context={'movie':movie } )
 
-def add_like(request, movie_id):
-    form= None
-    movie= Movie.objects.get(id=movie_id)
+def user_reviews(request, user_id):
+    user = User.objects.get(id=user_id)
+    reviews = MovieReview.objects.filter(user=user).order_by('-created_at')
+    context = {
+        'profile_user': user,
+        'reviews': reviews
+    }
+    return render(request, 'movies/user_reviews.html', context=context)
 
-    if request.method == 'POST':
-        form = MovieCommentForm(request.POST)
-        if form.is_valid():
-            review = form.cleaned_data['review']
-            movie_like = MovieLike(
-                    movie=movie,
-                    review=review,
-                    user=request.user)
-            movie_like.save()
-            return HttpResponseRedirect('/movies/')
-    else:
-        form = MovieCommentForm()
-        return render(request,
-                  'movies/movie_comment_form.html',
-                  {'form': form, 'movie':movie})
+def add_like(request, movie_id):
+    movie = Movie.objects.get(id=movie_id)
+    if request.user.is_authenticated:
+        like, created = MovieLike.objects.get_or_create(user=request.user, movie=movie)
+        if not created:
+            like.delete()
+    return redirect('movie', movie_id=movie_id)
     
 def add_review(request, movie_id):
     form = None

@@ -1,0 +1,41 @@
+{% extends "movies/base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-6 py-8">
+
+  <h1 class="text-white text-2xl font-semibold mb-1">Reseñas de {{ profile_user.username }}</h1>
+  <p class="text-gray-500 text-sm mb-6">{{ reviews.count }} reseña{{ reviews.count|pluralize:"s" }}</p>
+
+  {% for review in reviews %}
+  <div class="border border-gray-200 rounded-xl p-5 mb-4">
+
+    <div class="flex items-center gap-4 mb-3">
+      <a href="/movies/{{ review.movie.id }}/">
+        {% if review.movie.poster_path %}
+          <img src="https://image.tmdb.org/t/p/w92/{{ review.movie.poster_path }}"
+               class="w-12 rounded-lg">
+        {% endif %}
+      </a>
+      <div>
+        <a href="/movies/{{ review.movie.id }}/" class="font-semibold text-sky-600 hover:underline">
+          {{ review.movie.title }}
+        </a>
+        <p class="text-gray-400 text-xs">{{ review.movie.release_date|date:"Y" }}</p>
+      </div>
+      <div class="ml-auto text-right">
+        <span class="text-lg font-bold text-sky-700">{{ review.rating }}</span>
+        <span class="text-gray-400 text-xs">/100</span>
+      </div>
+    </div>
+
+    <h2 class="text-white font-medium text-sm mb-1">{{ review.title }}</h2>
+    <p class="text-white text-sm">{{ review.review }}</p>
+    <p class="text-gray-400 text-xs mt-3">{{ review.created_at}}</p>
+
+  </div>
+  {% empty %}
+  <p class="text-gray-500">Este usuario no ha dejado reseñas todavía.</p>
+  {% endfor %}
+
+</div>
+{% endblock content %}
