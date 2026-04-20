@@ -1,0 +1,78 @@
+{% extends "movies/base.html" %}
+
+{% block content %}
+<article>
+
+  <!-- HEADER con foto y datos principales -->
+  <div class="relative w-full overflow-hidden bg-gray-900">
+    <div class="relative flex w-full px-10 py-8 items-start text-white gap-8">
+
+      <!-- FOTO -->
+      <div class="rounded-xl overflow-hidden w-52 flex-shrink-0">
+        <div class="aspect-[2/3] bg-gray-700">
+          {% if person.profile_path %}
+            <img src="https://image.tmdb.org/t/p/w600_and_h900_face/{{ person.profile_path }}"
+                 class="w-full h-full object-cover">
+          {% else %}
+            <img src="https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-4-user-grey-d8fe957375e70239d6abdd549fd7568c89281b2179b5f4470e2e12895792dfa5.svg"
+                 class="w-full h-full object-contain p-8">
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- DATOS -->
+      <div class="flex-1">
+        <h1 class="text-4xl font-bold mb-4">{{ person.name }}</h1>
+
+        <div class="flex gap-8 text-sm text-gray-300 mb-6">
+          {% if person.birthday %}
+          <div>
+            <p class="text-gray-500 font-light">Born</p>
+            <p>{{ person.birthday|date:"d/m/Y" }}</p>
+            {% if person.place_of_birth %}
+            <p class="text-gray-400">{{ person.place_of_birth }}</p>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          {% if person.deathday %}
+          <div>
+            <p class="text-gray-500 font-light">Died</p>
+            <p>{{ person.deathday|date:"d/m/Y" }}</p>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if person.biography %}
+        <h2 class="text-lg font-bold mb-2">Biography</h2>
+        <p class="text-gray-300 text-sm leading-relaxed">{{ person.biography }}</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CREDITS -->
+  <div class="bg-white px-10 py-6">
+    <h2 class="text-2xl font-semibold mb-4">Known For</h2>
+    <div class="flex flex-col gap-2">
+      {% for c in credits %}
+      <a href="/movies/{{ c.movie.id }}/" class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100">
+        <div class="w-12 flex-shrink-0">
+          {% if c.movie.poster_path %}
+            <img src="https://image.tmdb.org/t/p/w92/{{ c.movie.poster_path }}"
+                 class="w-full rounded">
+          {% endif %}
+        </div>
+        <div>
+          <p class="font-semibold">{{ c.movie.title }}</p>
+          <p class="text-gray-500 text-sm">{{ c.job }} {% if c.character %}— {{ c.character }}{% endif %}</p>
+          <p class="text-gray-400 text-xs">{{ c.movie.release_date|date:"Y" }}</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+</article>
+{% endblock content %}

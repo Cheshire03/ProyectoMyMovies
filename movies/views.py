@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from movies.models import Movie, MovieReview, Person, MovieLike
+from movies.models import Movie, MovieReview, Person, MovieLike, MovieCredit
 from movies.forms import MovieReviewForm, MovieCommentForm
 from movies.utils import get_dominant_color
 
@@ -22,12 +22,25 @@ def index(request):
     context = { 'movies':movies, 'message':'welcome' }
     return render(request,'movies/index.html', context=context )
     
+def person(request, person_id):
+    person = Person.objects.get(id=person_id)
+    credits = MovieCredit.objects.filter(person=person).order_by('movie__release_date')
+    context = {
+        'person': person,
+        'credits': credits
+    }
+    return render(request, 'movies/person.html', context=context)
+
 def movie(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
     bg_color = get_dominant_color(
     f"https://image.tmdb.org/t/p/w500{movie.backdrop_path}")
+    credits = MovieCredit.objects.filter(
+        movie=movie,
+        job__name='Acting'
+    ).order_by('order')[:10]
     review_form = MovieReviewForm()
-    context = { 'movie':movie, 'saludo':'welcome', 'review_form':review_form ,'bg_color': bg_color }
+    context = { 'movie':movie, 'saludo':'welcome', 'review_form':review_form ,'bg_color': bg_color, 'credits':credits }
     return render(request,'movies/movie.html', context=context )
 
 def movie_reviews(request, movie_id):

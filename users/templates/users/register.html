@@ -1,0 +1,66 @@
+{% extends "movies/base.html" %}
+
+{% block style %}
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    border: 0.5px solid #d1d5db;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+{% endblock style %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 2rem auto;" class="bg-white border border-gray-200 rounded-xl p-8">
+  <h1 class="text-2xl font-semibold">Crear cuenta</h1>
+  <p class="text-sm text-gray-500 mb-6">Únete para llevar un registro de tus películas</p>
+
+  <form method="POST" class="flex flex-col gap-4">
+    {% csrf_token %}
+
+    <div>
+      <label class="text-xs text-gray-500 block mb-1">Usuario</label>
+      {{ form.username }}
+    </div>
+    <div>
+      <label class="text-xs text-gray-500 block mb-1">Correo electrónico</label>
+      {{ form.email }}
+    </div>
+    <div>
+      <label class="text-xs text-gray-500 block mb-1">Contraseña</label>
+      {{ form.password1 }}
+    </div>
+    <div>
+      <label class="text-xs text-gray-500 block mb-1">Confirmar contraseña</label>
+      {{ form.password2 }}
+    </div>
+
+    {% if form.errors %}
+    <div class="text-red-500 text-sm">
+      {% for field in form %}
+        {% for error in field.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="w-full mt-2 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
+      Registrarse
+    </button>
+  </form>
+
+  <p class="text-center text-sm text-gray-500 mt-5">
+    ¿Ya tienes cuenta? <a href="/users/login/" class="text-blue-600 hover:underline">Inicia sesión</a>
+  </p>
+</div>
+{% endblock content %}

@@ -1,5 +1,6 @@
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .forms import RegisterForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -9,6 +10,16 @@ def index(request):
         return HttpResponseRedirect(reverse('login'))
     else:
         return render(request,'users/profile.html')
+    
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = RegisterForm()
+    return render(request, 'users/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':

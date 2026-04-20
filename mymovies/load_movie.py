@@ -27,7 +27,7 @@ def add_movie(movie_id):
     cur = conn.cursor()
 
     # --- JOBS ---
-    actors = [(actor['name'], actor['known_for_department'], '', actor['order'], actor['id']) for actor in credits['cast'][:10]]
+    actors = [(actor['name'], actor['known_for_department'], actor.get('character', ''), actor['order'], actor['id']) for actor in credits['cast'][:10]]
     crew   = [(member['name'], member['job'], '', 99, member['id']) for member in credits['crew'][:15]]
     credits_list = actors + crew
 

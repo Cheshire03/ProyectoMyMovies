@@ -2,16 +2,16 @@
 
 {% block content %}
 <article>
-  <div class="relative w-full min-h-screen overflow-hidden">
+  <div class="relative w-full overflow-hidden">
 
     <!-- Background image (sin oscurecer) -->
     <div class="absolute inset-0">
-      <img src="https://image.tmdb.org/t/p/original{{movie.backdrop_path}}" 
-           class="w-full h-full object-cover" />
+      <img src="https://image.tmdb.org/t/p/original{{movie.backdrop_path}}" class="w-full h-full object-cover" />
     </div>
 
     <!-- Tinte estilo TMDB: gradiente desde el color dominante a la derecha, negro a la izquierda -->
-    <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(0,0,0,0.95) 40%, {{ bg_color | slice:':-1' }}, 0.7) 100%);">
+    <div class="absolute inset-0"
+      style="background: linear-gradient(to right, rgba(0,0,0,0.95) 20%, {{ bg_color | slice:':-1' }}, 0.7) 100%);">
     </div>
 
     <div class="relative flex w-full px-10 py-8 items-start text-white gap-8">
@@ -79,5 +79,36 @@
       </div>
 
     </div>
+  </div>
+  <div class="bg-white px-10 py-6">
+    <h1 class="text-2xl font-semibold mb-4">Top Billed Cast</h1>
+    <div class="flex gap-4 overflow-x-auto pb-4">
+      {% for c in credits %}
+      <div class="flex-shrink-0 w-36 rounded-lg overflow-hidden shadow-md">
+        <div class="aspect-[2/3] bg-gray-200">
+          {% if c.person.profile_path %}
+          <a href="/movies/person/{{ c.person.id }}/" class="block group">
+            <img src="https://image.tmdb.org/t/p/w600_and_h900_face/{{ c.person.profile_path }}"
+              class="w-full h-full object-cover transition-transform transition duration-300 group-hover:scale-105" />
+          </a>
+          {% else %}
+          <a href="/movies/person/{{ c.person.id }}/" class="block group">
+            <img
+              src="https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-4-user-grey-d8fe957375e70239d6abdd549fd7568c89281b2179b5f4470e2e12895792dfa5.svg"
+              class="w-full h-full object-contain p-8 transition-transform transition duration-300 group-hover:scale-105" />
+          </a>
+          {% endif %}
+        </div>
+        <div class="p-2">
+          <a href="/movies/person/{{ c.person.id }}/">
+            <p class="font-semibold text-sm">{{ c.person.name }}</p>
+          </a>
+          <p class="text-gray-500 text-xs">{{ c.character }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </article>
+
 {% endblock content %}
