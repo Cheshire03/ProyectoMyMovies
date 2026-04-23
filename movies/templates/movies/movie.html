@@ -166,6 +166,25 @@
       </div>
     </div>
 
+    <!-- RECOMMENDED -->
+    <div class="mt-10">
+      <h2 class="text-2xl font-semibold mb-4">Recommended Movies</h2>
+
+      <div class="flex gap-4 overflow-x-auto pb-4">
+        {% for movie in recommended_movies %}
+          <div class="flex-shrink-0 w-36">
+            <a href="/movies/{{ movie.id }}" class="block group">
+              <img
+                src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}"
+                class="rounded-lg transition-transform duration-300 group-hover:scale-105"
+              />
+              <p class="text-sm mt-2">{{ movie.title }}</p>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
   </div>
 </article>
 
