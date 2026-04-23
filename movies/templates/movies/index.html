@@ -1,35 +1,72 @@
-{% extends "movies/base.html" %}
+{% extends "movies/base.html" %} {% block content %}
 
-{% block content %}
+<div class="container mx-auto px-4 py-6 lg:px-16 lg:pt-10">
+  <!-- GRID PRINCIPAL -->
+  <div
+    id="artworks-container"
+    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"
+  >
+    {% for movie in movies %}
+    <div class="group">
+      <a
+        href="/movies/{{ movie.id }}"
+        class="block relative overflow-hidden rounded-xl shadow-md transform transition duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl"
+      >
+        <!-- IMAGEN -->
+        <img
+          class="w-full h-auto transition-all duration-300 ease-out group-hover:scale-110 group-hover:brightness-75"
+          src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}"
+          alt="{{ movie.title }}"
+        />
 
-<div class="container mx-auto px-5 py-2 lg:px-32 lg:pt-12">
-  <div id="artworks-container" class="-m-1 flex flex-wrap md:-m-2">
-    {% for movie in movies %}  
-    <div class="flex w-1/4 flex-wrap pt-3">
-      <div class="w-full p-1 md:p-2">
-        <a href="/movies/{{ movie.id }}" class="block group">
-          <img
-            class="h-full w-full rounded-lg object-cover object-center transition-transform transition duration-300 group-hover:scale-105"
-            src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{ movie.poster_path }}"
-            alt="{{ movie.title }}"
-          />
-        </a>
-      </div>
-      <div  class=" -m-1 h-10 mt-1 mb-5 "> 
-                <a href="/movies/{{movie.id}}" class="block overflow-hidden
-                    text-ellipsis pl-5 text-sky-600 font-bold hover:underline underline-offset-2"> {{movie.title|truncatechars_html:40}}  </a>
-                <span class="block pl-5 text-gray-400 text-sm font-thin"> {{movie.release_date}} </span>
-      </div>
+        <!-- OVERLAY -->
+        <div
+          class="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end p-3"
+        >
+          <div
+            class="translate-y-3 group-hover:translate-y-0 transition duration-300"
+          >
+            <p class="text-white text-xs sm:text-sm font-semibold">
+              {{ movie.title }}
+            </p>
+            <p class="text-gray-300 text-xs">{{ movie.release_date }}</p>
+          </div>
+        </div>
+      </a>
     </div>
-    {% endfor %} 
+    {% endfor %}
   </div>
-  <button class="flex w-48 mt-10 justify-center mx-auto rounded-md
-        bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white
-        shadow-sm hover:bg-indigo-500 focus-visible:outline
-        focus-visible:outline-2 focus-visible:outline-offset-2 
-        focus-visible:outline-indigo-600"
-        hx-get="/movies/random" hx-target="#artworks-container" hx-swap="beforeend"
-    >Get More Movies</button>
 
+  <!-- BOTÓN -->
+  <button
+    class="flex w-48 mt-10 justify-center mx-auto rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+    hx-get="/movies/random"
+    hx-target="#artworks-container"
+    hx-swap="beforeend"
+  >
+    Get More Movies
+  </button>
+
+  <!-- RECOMMENDED -->
+  <h2 class="text-2xl font-bold mt-12 mb-4 text-white">Recommended</h2>
+
+  <div class="flex gap-4 overflow-x-auto pb-6 px-1 sm:px-0">
+    {% for movie in recommended_movies %}
+    <div class="flex-shrink-0 w-28 sm:w-32 md:w-36 group">
+      <a href="/movies/{{ movie.id }}" class="block">
+        <img
+          class="rounded-xl transition-transform duration-300 group-hover:scale-110"
+          src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}"
+          alt="{{ movie.title }}"
+        />
+
+        <p class="text-white text-sm mt-2 font-medium group-hover:text-sky-400">
+          {{ movie.title|truncatechars:25 }}
+        </p>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
 </div>
+
 {% endblock content %}
