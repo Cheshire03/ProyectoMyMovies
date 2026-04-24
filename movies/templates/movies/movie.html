@@ -5,161 +5,159 @@
 #modal input[type="number"],
 #modal textarea {
     width: 100%;
-    border: 0.5px solid #d1d5db;
+    border: 0.5px solid #374151;
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 14px;
     box-sizing: border-box;
     outline: none;
     margin-bottom: 4px;
+    background: #1e293b;
+    color: white;
 }
-
 #modal input:focus,
 #modal textarea:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
 }
-
 #modal label {
     font-size: 13px;
-    color: #6b7280;
+    color: #9ca3af;
     display: block;
     margin-bottom: 4px;
 }
-
 {% endblock style %}
 
 {% block content %}
 <article>
-  <div class="relative w-full overflow-hidden">
 
-    <!-- Background image (sin oscurecer) -->
+  <!-- HERO con backdrop de alta calidad -->
+  <div class="relative w-full min-h-[520px] overflow-hidden">
+
     <div class="absolute inset-0">
-      <img src="https://image.tmdb.org/t/p/original{{movie.backdrop_path}}" class="w-full h-full object-cover" />
+      <img src="https://image.tmdb.org/t/p/w1280{{movie.backdrop_path}}"
+           class="w-full h-full object-cover object-top" />
     </div>
 
-    <!-- Tinte estilo TMDB: gradiente desde el color dominante a la derecha, negro a la izquierda -->
+    <!-- Gradiente: negro a la izquierda, color dominante translúcido a la derecha -->
     <div class="absolute inset-0"
-      style="background: linear-gradient(to right, rgba(0,0,0,0.95) 20%, {{ bg_color | slice:':-1' }}, 0.7) 100%);">
+      style="background: linear-gradient(to right, rgba(15,23,42,0.97) 30%, rgba(15,23,42,0.6) 70%, rgba(15,23,42,0.3) 100%);">
     </div>
+    <!-- Gradiente inferior para transición suave al contenido -->
+    <div class="absolute bottom-0 w-full h-24 bg-gradient-to-t from-[#0f172a] to-transparent"></div>
 
-    <div class="relative flex w-full px-10 py-8 items-start text-white gap-8">
+    <div class="relative flex w-full px-6 sm:px-10 py-10 items-start text-white gap-8">
 
       <!-- POSTER -->
-      <div class="rounded-xl overflow-hidden bg-white w-80 flex-shrink-0">
-        <img class="w-full object-cover" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{movie.poster_path}}"
-          alt="{{movie.title}}" />
-        <div class="bg-gray-50 pb-1 text-center flex flex-col items-center leading-tight">
-          <p class="text-gray-600 font-light">Data from:</p>
-          <a href="https://www.tmdb.org{{artwork.path}}" class="text-sky-600 font-bold">
-            tmdb.org{{artwork.path}}
-          </a>
+      <div class="rounded-xl overflow-hidden w-52 sm:w-64 lg:w-72 flex-shrink-0 shadow-2xl ring-1 ring-white/10">
+        <img class="w-full object-cover"
+             src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{movie.poster_path}}"
+             alt="{{movie.title}}" />
+        <div class="bg-[#0a0f1e] pb-2 pt-1 text-center flex flex-col items-center leading-tight">
+          <p class="text-gray-500 text-xs font-light">Data from:</p>
+          <a href="https://www.tmdb.org" class="text-amber-500 text-xs font-bold hover:text-amber-400">tmdb.org</a>
         </div>
       </div>
 
       <!-- TEXTO -->
-      <div class="flex-1">
+      <div class="flex-1 min-w-0">
 
-        <p class="text-4xl font-bold">
-          {{movie.title}} ({{movie.release_date|date:"Y"}})
+        <p class="text-3xl sm:text-4xl font-bold leading-tight drop-shadow">
+          {{movie.title}} <span class="font-light text-gray-300">({{movie.release_date|date:"Y"}})</span>
         </p>
-        <div class="flex items-center gap-2 text-sm pt-1 pb-4">
-          <span>{{ movie.release_date|date:"d/m/Y" }}</span>
-          <span>•</span>
 
+        <div class="flex flex-wrap items-center gap-2 text-sm pt-2 pb-4 text-gray-300">
+          <span>{{ movie.release_date|date:"d/m/Y" }}</span>
+          <span class="text-gray-600">•</span>
           <span>
             {% for g in movie.genres.all %}
             {{ g }}{% if not forloop.last %} / {% endif %}
             {% endfor %}
           </span>
-
-          <span>•</span>
-          <span>{{ movie.running_time }}min</span>
+          <span class="text-gray-600">•</span>
+          <span>{{ movie.running_time }} min</span>
         </div>
 
         {% if user.is_authenticated %}
-        <div class="inline-flex items-center gap-6 mb-4">
-
+        <div class="inline-flex items-center gap-6 mb-5">
           <!-- Like -->
-          <a href="/movies/movie_like/add/{{movie.id}}/" class="inline-flex items-center mt-2 gap-2">
+          <a href="/movies/movie_like/add/{{movie.id}}/" class="inline-flex items-center gap-2 group">
             {% if user_liked %}
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 fill-red-500 stroke-red-500" viewBox="0 0 24 24">
-              <path
-                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-red-500 stroke-red-500" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
-            <span class="text-red-500 font-medium">Liked</span>
+            <span class="text-red-400 font-medium text-sm">Liked</span>
             {% else %}
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 fill-none stroke-white stroke-2" viewBox="0 0 24 24">
-              <path
-                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-none stroke-gray-300 stroke-2 group-hover:stroke-red-400 transition-colors" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
-            <span class="text-white font-medium">Like</span>
+            <span class="text-gray-300 font-medium text-sm group-hover:text-white transition-colors">Like</span>
             {% endif %}
           </a>
 
           <!-- Add Review -->
-          <a class="inline-flex items-center mt-2 gap-2 cursor-pointer" hx-get="/movies/movie_review/add/{{movie.id}}"
-            hx-target="body" hx-swap="beforeend" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 stroke-white fill-none stroke-2" viewBox="0 0 24 24">
+          <a class="inline-flex items-center gap-2 cursor-pointer group"
+             hx-get="/movies/movie_review/add/{{movie.id}}" hx-target="body" hx-swap="beforeend" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-gray-300 fill-none stroke-2 group-hover:stroke-amber-400 transition-colors" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="16" />
               <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
-            <span class="text-white font-medium">Add Review</span>
+            <span class="text-gray-300 font-medium text-sm group-hover:text-amber-400 transition-colors">Add Review</span>
           </a>
-
         </div>
         {% endif %}
 
-        <h1 class="text-lg font-bold pt-4 pb-1">Overview</h1>
-        <p class="text-base">{{ movie.overview }}</p>
+        <h2 class="text-base font-bold pt-2 pb-1 text-amber-400">Overview</h2>
+        <p class="text-gray-200 text-sm leading-relaxed">{{ movie.overview }}</p>
 
-        <h1 class="text-lg font-bold pt-6 pb-1">Credits</h1>
-        <p class="text-sm font-thin">
+        <h2 class="text-base font-bold pt-5 pb-1 text-amber-400">Credits</h2>
+        <p class="text-gray-400 text-sm font-light">
           {% for c in movie.credits.all %}
-          {{c}}{% if not forloop.last %} - {% endif %}
+          {{c}}{% if not forloop.last %} · {% endif %}
           {% endfor %}
         </p>
+
       </div>
-
     </div>
+  </div>
 
-  </div>
-  </div>
-  <div class="bg-white px-10 py-6">
-    <div>
-      <h1 class="text-2xl font-semibold mb-4">Top Billed Cast</h1>
-      <div class="flex gap-4 overflow-x-auto pb-4">
-        {% for c in credits %}
-        <div class="flex-shrink-0 w-36 rounded-lg overflow-hidden shadow-md">
-          <div class="aspect-[2/3] bg-gray-200">
-            {% if c.person.profile_path %}
-            <a href="/movies/person/{{ c.person.id }}/" class="block group">
-              <img src="https://image.tmdb.org/t/p/w600_and_h900_face/{{ c.person.profile_path }}"
-                class="w-full h-full object-cover transition-transform transition duration-300 group-hover:scale-105" />
-            </a>
-            {% else %}
-            <a href="/movies/person/{{ c.person.id }}/" class="block group">
-              <img
-                src="https://www.themoviedb.org/assets/2/v4/glyphicons/basic/glyphicons-basic-4-user-grey-d8fe957375e70239d6abdd549fd7568c89281b2179b5f4470e2e12895792dfa5.svg"
-                class="w-full h-full object-contain p-8 transition-transform transition duration-300 group-hover:scale-105" />
-            </a>
-            {% endif %}
-          </div>
-          <div class="p-2">
-            <a href="/movies/person/{{ c.person.id }}/">
-              <p class="font-semibold text-sm">{{ c.person.name }}</p>
-            </a>
-            <p class="text-gray-500 text-xs">{{ c.character }}</p>
-          </div>
+  <!-- SECCIÓN INFERIOR (fondo ligeramente distinto para separar) -->
+  <div class="bg-[#111827] px-6 sm:px-10 py-8">
+
+    <!-- TOP BILLED CAST -->
+    <h2 class="text-xl font-semibold mb-4 text-white">Top Billed Cast</h2>
+    <div class="flex gap-4 overflow-x-auto pb-4">
+      {% for c in credits %}
+      <div class="flex-shrink-0 w-32 rounded-lg overflow-hidden shadow-md bg-[#1e293b] ring-1 ring-white/5">
+        <div class="aspect-[2/3] bg-gray-800">
+          {% if c.person.profile_path %}
+          <a href="/movies/person/{{ c.person.id }}/" class="block group">
+            <img src="https://image.tmdb.org/t/p/w300/{{ c.person.profile_path }}"
+              class="w-full h-full object-cover transition duration-300 group-hover:scale-105" />
+          </a>
+          {% else %}
+          <a href="/movies/person/{{ c.person.id }}/" class="block group flex items-center justify-center h-full">
+            <svg class="w-16 h-16 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </a>
+          {% endif %}
         </div>
-        {% endfor %}
+        <div class="p-2">
+          <a href="/movies/person/{{ c.person.id }}/">
+            <p class="font-semibold text-xs text-white hover:text-amber-400 transition-colors">{{ c.person.name }}</p>
+          </a>
+          <p class="text-gray-500 text-xs mt-0.5">{{ c.character }}</p>
+        </div>
       </div>
+      {% endfor %}
     </div>
+
     <!-- REVIEWS -->
-    <div class="bg-white mt-6 border-t border-gray-100">
+    <div class="mt-8 pt-6 border-t border-white/10">
       <div class="flex items-center justify-between mb-4">
-        <h1 class="text-2xl font-semibold">Reseñas</h1>
+        <h2 class="text-xl font-semibold text-white">Reseñas</h2>
       </div>
       <div hx-trigger="listChanged from:body" hx-get="{% url 'movie_reviews' movie.id %}" hx-target="this">
         {% include "movies/reviews.html" %}
@@ -167,25 +165,21 @@
     </div>
 
     <!-- RECOMMENDED -->
-    <div class="mt-10">
-      <h2 class="text-2xl font-semibold mb-4">Recommended Movies</h2>
-
+    <div class="mt-10 pt-6 border-t border-white/10">
+      <h2 class="text-xl font-semibold mb-4 text-white">Recommended Movies</h2>
       <div class="flex gap-4 overflow-x-auto pb-4">
         {% for movie in recommended_movies %}
-          <div class="flex-shrink-0 w-36">
-            <a href="/movies/{{ movie.id }}" class="block group">
-              <img
-                src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}"
-                class="rounded-lg transition-transform duration-300 group-hover:scale-105"
-              />
-              <p class="text-sm mt-2">{{ movie.title }}</p>
-            </a>
-          </div>
+        <div class="flex-shrink-0 w-32 group">
+          <a href="/movies/{{ movie.id }}" class="block">
+            <img src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}"
+              class="rounded-lg transition-transform duration-300 group-hover:scale-105 w-full" />
+            <p class="text-gray-400 text-xs mt-2 group-hover:text-amber-400 transition-colors">{{ movie.title|truncatechars:20 }}</p>
+          </a>
+        </div>
         {% endfor %}
       </div>
     </div>
 
   </div>
 </article>
-
 {% endblock content %}

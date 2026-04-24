@@ -1,83 +1,78 @@
 {% load static %}
-<nav class="bg-white shadow">
+<nav class="bg-[#0a0f1e]/90 backdrop-blur-sm border-b border-white/10 sticky top-0 z-50">
   <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
     <div class="flex py-0 justify-between">
+
+      <!-- LOGO -->
       <div class="flex px-2 lg:px-0">
         <div class="flex flex-shrink-0 items-center">
-          <a href="/">
-            <img class="my-1 h-12 w-auto" src="{% static 'movies/film.png' %}" alt="logo">
+          <a href="/" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 1px;">
+            <div style="position: relative; display: inline-block; line-height: 1;">
+              <span style="color: #ef3333; font-size: 38px; font-weight: 900; line-height: 1; font-family: serif; -webkit-text-stroke: 1px #fbbf24;">映画</span>
+              <span style="position: absolute; top: -3px; right: -9px; color: #fbbf24; font-size: 13px;">✦</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+              <span style="display: inline-block; width: 16px; height: 1px; background: #6b7280;"></span>
+              <span style="color: white; font-size: 10px; font-weight: 800; letter-spacing: 0.55em;">EIGA</span>
+              <span style="display: inline-block; width: 16px; height: 1px; background: #6b7280;"></span>
+            </div>
           </a>
         </div>
         <div class="hidden lg:ml-6 lg:flex lg:space-x-8">
-          <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-          <a href="/" class="inline-flex items-center border-b-2
-                        {% if request.path == '/' %}
-                        border-sky-600 
-                        {% else %} 
-                        border-transparent
-                        {% endif %}
-                        px-1 
-                        pt-1 text-sm font-semibold text-blue-900">My Movies</a>
+          <a href="/" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-semibold transition-colors
+            {% if request.path == '/' %}border-amber-400 text-white{% else %}border-transparent text-gray-400 hover:text-white hover:border-gray-500{% endif %}">
+            My Movies
+          </a>
           {% if user.is_authenticated %}
-          <a href="/movies/user/{{ user.id }}/" class="inline-flex items-center border-b-2 
-              {% if request.path == '/movies/user/{{ user.id }}/' %}
-              border-sky-600 
-              {% else %} 
-              border-transparent
-              {% endif %}
-              px-1
-              pt-1 text-sm font-semibold text-gray-500 hover:border-gray-300
-              hover:text-gray-700">Mis Peliculas</a>
-
+          <a href="/movies/user/{{ user.id }}/" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-semibold transition-colors
+            border-transparent text-gray-400 hover:text-white hover:border-gray-500">
+            Mis Películas
+          </a>
           {% endif %}
         </div>
       </div>
+
+      <!-- BUSCADOR -->
       <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
         <div class="w-full max-w-lg lg:max-w-xs">
           <form method="get" action="/movies/search/">
             <label for="search" class="sr-only">Buscar</label>
             <div class="relative">
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd"
-                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                    clip-rule="evenodd" />
+                <svg class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <input id="search" name="search" class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900
-                            ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
-                            focus:ring-inset focus:ring-indigo-600 
-                            sm:text-sm sm:leading-6" placeholder="Buscar" type="search" {% if search_value %}
-                value="{{ search_value|stringformat:'s' }}" {% endif %}>
-
+              <input id="search" name="search"
+                class="block w-full rounded-md border-0 bg-white/10 py-1.5 pl-10 pr-3 text-white
+                       ring-1 ring-inset ring-white/20 placeholder:text-gray-500
+                       focus:ring-2 focus:ring-inset focus:ring-amber-500 sm:text-sm sm:leading-6"
+                placeholder="Buscar película..." type="search"
+                {% if search_value %}value="{{ search_value|stringformat:'s' }}"{% endif %}>
             </div>
           </form>
         </div>
       </div>
-      <div class="hidden lg:ml-4 lg:flex lg:items-center">
 
-
+      <!-- AUTH -->
+      <div class="hidden lg:ml-4 lg:flex lg:items-center gap-2">
         {% if user.is_authenticated %}
-        <div class="relative ml-4 flex-shrink-0">
-          <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-semibold text-gray-500"> Hola,
-            {{user.username}} </a>
-        </div>
-        <div class="relative ml-4 flex-shrink-0">
-          <a href="/users/logout" class="inline-flex items-center px-1 pt-1 text-sm font-semibold text-sky-700">Cerrar
-            Sesión</a>
-        </div>
+          <a href="/movies/user/{{ user.id }}/" class="text-sm font-medium text-gray-300 hover:text-white transition-colors px-2">
+            Hola, {{ user.username }}
+          </a>
+          <a href="/users/logout" class="px-3 py-1.5 rounded-md text-sm font-semibold bg-amber-500 text-gray-900 hover:bg-amber-400 transition-colors">
+            Cerrar Sesión
+          </a>
         {% else %}
-        <div class="relative ml-4 flex-shrink-0">
-          <a href="/users/register/" class="inline-flex items-center
-                        px-1 pt-1 text-sm font-semibold text-sky-700"> Regístrate </a>
-        </div>
-        <div class="relative ml-4 flex-shrink-0">
-          <a href="/users/login" class="inline-flex items-center px-1 pt-1 text-sm font-semibold text-sky-700">Iniciar
-            Sesión</a>
-        </div>
+          <a href="/users/register/" class="text-sm font-medium text-gray-400 hover:text-white transition-colors px-2">
+            Regístrate
+          </a>
+          <a href="/users/login" class="px-3 py-1.5 rounded-md text-sm font-semibold bg-amber-500 text-gray-900 hover:bg-amber-400 transition-colors">
+            Iniciar Sesión
+          </a>
         {% endif %}
       </div>
+
     </div>
   </div>
-
 </nav>
