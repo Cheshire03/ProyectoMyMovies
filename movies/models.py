@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
@@ -44,6 +45,8 @@ class Movie(models.Model):
     backdrop_path = models.URLField(blank=True, null=True)
     genres = models.ManyToManyField(Genre)
     credits = models.ManyToManyField(Person, through='MovieCredit')
+    class Meta:
+        indexes = [GinIndex(fields=['title'], name='movie_title_gin', opclasses=['gin_trgm_ops'])]
 
     def __str__(self):
         return f'{self.title} {self.release_date}'

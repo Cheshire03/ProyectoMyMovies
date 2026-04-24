@@ -4,6 +4,9 @@ from movies.models import Movie, MovieReview, Person, MovieLike, MovieCredit
 from movies.forms import MovieReviewForm, MovieCommentForm
 from movies.utils import get_dominant_color
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import Q
+
 
 User = get_user_model()
 # Create your views here.
@@ -118,3 +121,45 @@ def add_review(request, movie_id):
         return render(request,
                   'movies/movie_review_form.html',
                   {'movie_review_form': form, 'movie':movie})
+
+def search(request):
+    query = request.GET.get('search', '')
+    movies = []
+    if query:
+        movies = Movie.objects.filter(
+            Q(title__icontains=query) |
+            Q(title__trigram_similar=query)
+        ).annotate(
+            similarity=TrigramSimilarity('title', query)
+        ).filter(
+            Q(title__icontains=query) | Q(similarity__gt=0.1)
+        ).order_by('-similarity').distinct()
+    return render(request, 'movies/search.html', {
+        'movies': movies,
+        'search_value': query
+    })
+
+def user_profile(request, user_id):
+    profile_user = User.objects.get(id=user_id)
+    liked_movies = MovieLike.objects.filter(user=profile_user).order_by('-created_at')
+    reviews = MovieReview.objects.filter(user=profile_user).order_by('-created_at')
+    
+    is_own_profile = request.user == profile_user
+    is_following = False
+    if request.user.is_authenticated and not is_own_profile:
+        from users.models import Follow
+        is_following = Follow.objects.filter(follower=request.user, following=profile_user).exists()
+
+    followers_count = profile_user.followers.count()
+    following_count = profile_user.following.count()
+
+    context = {
+        'profile_user': profile_user,
+        'liked_movies': liked_movies,
+        'reviews': reviews,
+        'is_own_profile': is_own_profile,
+        'is_following': is_following,
+        'followers_count': followers_count,
+        'following_count': following_count,
+    }
+    return render(request, 'movies/user_profile.html', context=context)
