@@ -1,23 +1,63 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Peliculas</title>
-</head>
-<body>
-    <h1>Lista de Peliculas</h1>
+{% extends "movies/base.html" %}
 
-    {% if movies %}
-        <ul>
-            {% for movie in movies %}
-                <li>
-                   <b> {{ movie.title }} </b> - {{ obj.overview }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay objetos disponibles.</p>
-    {% endif %}
+{% block content %}
+<div class="container mx-auto px-4 py-10 lg:px-16">
 
-</body>
-</html>
+  <h1 class="text-3xl font-bold text-white mb-8">All Movies</h1>
+
+  <!-- FILTROS -->
+  <div class="bg-[#1e293b] rounded-2xl p-5 mb-8 ring-1 ring-white/10"
+       hx-get="/movies/allmovies/filter"
+       hx-trigger="change"
+       hx-target="#movie-grid"
+       hx-swap="innerHTML"
+       hx-include="[data-filter]">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+      <!-- Género -->
+      <div>
+        <label class="text-xs text-gray-400 uppercase tracking-wide mb-1 block">Género</label>
+        <select name="genre" data-filter
+          class="w-full bg-[#0f172a] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500">
+          <option value="">Todos</option>
+          {% for genre in genres %}
+          <option value="{{ genre.id }}">{{ genre.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Año -->
+      <div>
+        <label class="text-xs text-gray-400 uppercase tracking-wide mb-1 block">Año</label>
+        <select name="year" data-filter
+          class="w-full bg-[#0f172a] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500">
+          <option value="">Todos</option>
+          {% for year in years %}
+          <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Ordenar -->
+      <div>
+        <label class="text-xs text-gray-400 uppercase tracking-wide mb-1 block">Ordenar por</label>
+        <select name="sort" data-filter
+          class="w-full bg-[#0f172a] text-white border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500">
+          <option value="recent">Más recientes</option>
+          <option value="likes">Más likes</option>
+          <option value="rating">Mejor calificación</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div id="movie-grid"
+       class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+    {% include "movies/partials/movie_grid.html" %}
+  </div>
+
+</div>
+{% endblock content %}

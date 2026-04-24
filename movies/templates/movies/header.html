@@ -5,13 +5,13 @@
 
       <!-- LOGO -->
       <div class="flex px-2 lg:px-0">
-        <div class="flex flex-shrink-0 items-center">
+        <div class="flex flex-shrink-0 items-center py-1">
           <a href="/" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 1px;">
             <div style="position: relative; display: inline-block; line-height: 1;">
-              <span style="color: #ef3333; font-size: 38px; font-weight: 900; line-height: 1; font-family: serif; -webkit-text-stroke: 1px #fbbf24;">映画</span>
+              <span style="color: #ef3333; font-size: 30px; font-weight: 900; line-height: 1; font-family: serif; -webkit-text-stroke: 1px #fbbf24;">映画</span>
               <span style="position: absolute; top: -3px; right: -9px; color: #fbbf24; font-size: 13px;">✦</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
               <span style="display: inline-block; width: 16px; height: 1px; background: #6b7280;"></span>
               <span style="color: white; font-size: 10px; font-weight: 800; letter-spacing: 0.55em;">EIGA</span>
               <span style="display: inline-block; width: 16px; height: 1px; background: #6b7280;"></span>
@@ -21,7 +21,7 @@
         <div class="hidden lg:ml-6 lg:flex lg:space-x-8">
           <a href="/" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-semibold transition-colors
             {% if request.path == '/' %}border-amber-400 text-white{% else %}border-transparent text-gray-400 hover:text-white hover:border-gray-500{% endif %}">
-            My Movies
+            Homepage
           </a>
           {% if user.is_authenticated %}
           <a href="/movies/user/{{ user.id }}/" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-semibold transition-colors

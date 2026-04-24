@@ -2,7 +2,8 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('all/',all_movies),
+    path('allmovies', allmovies, name='allmovies'),
+    path('allmovies/filter', allmovies_filter, name='allmovies_filter'),
     path('<int:movie_id>/', movie, name='movie'),
     path('my_movies/', my_movies, name='my_movies'),
     path('person/<int:person_id>/', person, name='person'),
