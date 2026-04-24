@@ -4,95 +4,99 @@
 {% block content %}
 <div class="max-w-4xl mx-auto px-6 py-8">
 
-  <!-- HEADER PERFIL -->
-  <div class="flex items-center gap-6 mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+    <!-- HEADER PERFIL -->
+    <div class="flex items-center gap-6 mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
 
-    <!-- Avatar -->
-    <div class="w-16 h-16 rounded-full bg-sky-600 flex items-center justify-center flex-shrink-0">
-      <span class="text-white font-semibold text-2xl">{{ profile_user.username|slice:":2"|upper }}</span>
-    </div>
+        <!-- Avatar -->
+        <div class="w-16 h-16 rounded-full bg-sky-600 flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-semibold text-2xl">{{ profile_user.username|slice:":2"|upper }}</span>
+        </div>
 
-    <!-- Info -->
-    <div class="flex-1">
-      <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ profile_user.username }}</h1>
-      <div class="flex gap-6 mt-2 text-sm text-gray-500 dark:text-gray-400">
-        <span><strong class="text-gray-900 dark:text-white">{{ liked_movies.count }}</strong> películas</span>
-        <span><strong class="text-gray-900 dark:text-white">{{ followers_count }}</strong> seguidores</span>
-        <span><strong class="text-gray-900 dark:text-white">{{ following_count }}</strong> siguiendo</span>
-      </div>
-    </div>
+        <!-- Info -->
+        <div class="flex-1">
+            <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ profile_user.username }}</h1>
+            <div class="flex gap-6 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <span><strong class="text-gray-900 dark:text-white">{{ liked_movies.count }}</strong> películas</span>
+                <span><strong class="text-gray-900 dark:text-white">{{ followers_count }}</strong> seguidores</span>
+                <span><strong class="text-gray-900 dark:text-white">{{ following_count }}</strong> siguiendo</span>
+            </div>
+        </div>
 
-    <!-- Botón seguir -->
-    {% if not is_own_profile and request.user.is_authenticated %}
-    <a href="/users/follow/{{ profile_user.id }}/"
-       class="px-4 py-2 rounded-lg text-sm font-medium
+        <!-- Botón seguir -->
+        {% if not is_own_profile and request.user.is_authenticated %}
+        <a href="/users/follow/{{ profile_user.id }}/" class="px-4 py-2 rounded-lg text-sm font-medium
        {% if is_following %}
        bg-gray-200 text-gray-700 hover:bg-gray-300
        {% else %}
        bg-sky-600 text-white hover:bg-sky-500
        {% endif %}">
-      {% if is_following %}Siguiendo{% else %}Seguir{% endif %}
-    </a>
+            {% if is_following %}Siguiendo{% else %}Seguir{% endif %}
+        </a>
+        {% endif %}
+
+    </div>
+
+    <!-- LIKED MOVIES -->
+    <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Películas</h2>
+    {% if liked_movies %}
+    <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 gap-3 mb-10">
+        {% for like in liked_movies %}
+        <div class="group">
+            <a href="/movies/{{ like.movie.id }}/">
+                <div class="aspect-[2/3] rounded-lg overflow-hidden">
+                    <img src="https://image.tmdb.org/t/p/w300/{{ like.movie.poster_path }}" alt="{{ like.movie.title }}"
+                        class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-500 text-sm mb-10">No hay películas guardadas todavía.</p>
     {% endif %}
 
-  </div>
+    <!-- REVIEWS -->
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Reseñas</h2>
+        <a href="/movies/user/{{ profile_user.id }}/reviews/" class="text-sm text-sky-600 hover:underline">Ver todas
+            →</a>
+    </div>
 
-  <!-- LIKED MOVIES -->
-  <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Películas</h2>
-  {% if liked_movies %}
-  <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 gap-3 mb-10">
-    {% for like in liked_movies %}
-    <div class="group">
-      <a href="/movies/{{ like.movie.id }}/">
-        <div class="aspect-[2/3] rounded-lg overflow-hidden">
-          <img src="https://image.tmdb.org/t/p/w300/{{ like.movie.poster_path }}"
-               alt="{{ like.movie.title }}"
-               class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+    {% for review in reviews %}
+    <article class="flex gap-4 py-5 border-b border-gray-100 dark:border-gray-700 last:border-0">
+
+        <!-- Poster en vez de avatar -->
+        <div class="flex-shrink-0 w-12">
+            <a href="/movies/{{ review.movie.id }}/">
+                <div class="aspect-[2/3] rounded-lg overflow-hidden">
+                    <img src="https://image.tmdb.org/t/p/w92/{{ review.movie.poster_path }}"
+                        alt="{{ review.movie.title }}" class="w-full h-full object-cover">
+                </div>
+            </a>
         </div>
-      </a>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <p class="text-gray-500 text-sm mb-10">No hay películas guardadas todavía.</p>
-  {% endif %}
 
-  <!-- REVIEWS -->
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Reseñas</h2>
-    <a href="/movies/user/{{ profile_user.id }}/reviews/"
-       class="text-sm text-sky-600 hover:underline">Ver todas →</a>
-  </div>
-
-  {% for review in reviews %}
-  <article class="flex gap-4 py-5 border-b border-gray-100 dark:border-gray-700 last:border-0">
-    <div class="flex-shrink-0">
-      <div class="w-10 h-10 rounded-full bg-sky-600 flex items-center justify-center">
-        <span class="text-white font-semibold text-sm">{{ profile_user.username|slice:":2"|upper }}</span>
-      </div>
-    </div>
-    <div class="flex-1 min-w-0">
-      <div class="flex items-center gap-2 mb-1">
-        <a href="/movies/{{ review.movie.id }}/" class="text-sm font-semibold text-sky-600 hover:underline">
-          {{ review.movie.title }}
-        </a>
-        <span class="text-gray-300 text-xs">•</span>
-        <span class="text-sm font-bold px-2 py-0.5 rounded-md
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+                <a href="/movies/{{ review.movie.id }}/" class="text-sm font-semibold text-sky-600 hover:underline">
+                    {{ review.movie.title }}
+                </a>
+                <span class="text-gray-300 text-xs">•</span>
+                <span class="text-sm font-bold px-2 py-0.5 rounded-md
           {% if review.rating >= 70 %}bg-green-100 text-green-700
           {% elif review.rating >= 50 %}bg-yellow-100 text-yellow-700
           {% else %}bg-red-100 text-red-700{% endif %}">
-          {{ review.rating }}<span class="font-normal text-xs">/100</span>
-        </span>
-        <span class="text-gray-300 text-xs">•</span>
-        <span class="text-gray-400 text-xs">{{ review.created_at|date:"d M Y" }}</span>
-      </div>
-      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">{{ review.title }}</h3>
-      <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{{ review.review }}</p>
-    </div>
-  </article>
-  {% empty %}
-  <p class="text-gray-500 text-sm py-4">No hay reseñas todavía.</p>
-  {% endfor %}
+                    {{ review.rating }}<span class="font-normal text-xs">/100</span>
+                </span>
+                <span class="text-gray-300 text-xs">•</span>
+                <span class="text-gray-400 text-xs">{{ review.created_at|date:"d M Y" }}</span>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">{{ review.title }}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">{{ review.review }}</p>
+        </div>
+    </article>
+    {% empty %}
+    <p class="text-gray-500 text-sm py-4">No hay reseñas todavía.</p>
+    {% endfor %}
 
 </div>
 {% endblock content %}
