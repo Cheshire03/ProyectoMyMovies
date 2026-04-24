@@ -159,30 +159,37 @@ def add_like(request, movie_id):
     return redirect('movie', movie_id=movie_id)
     
 def add_review(request, movie_id):
-    form = None
     movie = get_object_or_404(Movie, id=movie_id)
+    
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return HttpResponse(status=403)
+        
         form = MovieReviewForm(request.POST)
+        
         if form.is_valid():
-            rating = form.cleaned_data['rating']
-            title  = form.cleaned_data['title']
-            review = form.cleaned_data['review']
             movie_review = MovieReview(
-                    movie=movie,
-                    rating=rating,
-                    title=title,
-                    review=review,
-                    user=request.user)
+                movie=movie,
+                rating=form.cleaned_data['rating'],
+                title=form.cleaned_data['title'],
+                review=form.cleaned_data['review'],
+                user=request.user
+            )
             movie_review.save()
-            return HttpResponse(status=204,
-                                headers={'HX-Trigger': 'listChanged'})
+            return HttpResponse(status=204, headers={'HX-Trigger': 'listChanged'})
+        else:
+            # Muestra los errores en el template
+            print("ERRORES DEL FORMULARIO:", form.errors)  # ← Para ver en consola
+            return render(request, 'movies/movie_review_form.html', {
+                'movie_review_form': form, 
+                'movie': movie
+            })
     else:
         form = MovieReviewForm()
-        return render(request,
-                  'movies/movie_review_form.html',
-                  {'movie_review_form': form, 'movie':movie})
+        return render(request, 'movies/movie_review_form.html', {
+            'movie_review_form': form, 
+            'movie': movie
+        })
 
 def search(request):
     query = request.GET.get('search', '')

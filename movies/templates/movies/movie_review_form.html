@@ -28,24 +28,49 @@
                             class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
                     </div>
 
-                    <form hx-post="/movies/movie_review/add/{{ movie.id }}/" hx-target="#modal" hx-swap="outerHTML"
-                        class="flex flex-col gap-4 flex-1">
+                    <!-- ERRORES DEL FORMULARIO (del servidor) -->
+                    {% if movie_review_form.errors %}
+                    <div class="bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg mb-4 text-sm">
+                        <p class="font-bold mb-1">⚠️ Por favor corrige los siguientes errores:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            {% for field, errors in movie_review_form.errors.items %}
+                                {% for error in errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
 
-                        <!-- Review textarea -->
-                        <textarea name="review" rows="5" placeholder="Add a review..."
-                            class="w-full bg-[#374151] text-white placeholder-gray-400 rounded-lg p-3 text-sm resize-none border border-gray-600 focus:outline-none focus:border-gray-400"></textarea>
+                    <form hx-post="/movies/movie_review/add/{{ movie.id }}/" hx-target="#modal" hx-swap="outerHTML"
+                        class="flex flex-col gap-4 flex-1" id="reviewForm">
+                        
+                        {% csrf_token %}
+
+                        <!-- Review textarea con contador -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-gray-400 text-xs">Reseña</label>
+                                <span id="charCount" class="text-xs text-gray-500">0/5 caracteres mínimos</span>
+                            </div>
+                            <textarea name="review" rows="5" placeholder="Escribe tu reseña (mínimo 5 caracteres)..." id="reviewText"
+                                class="w-full bg-[#374151] text-white placeholder-gray-400 rounded-lg p-3 text-sm resize-none border border-gray-600 focus:outline-none focus:border-gray-400">{{ movie_review_form.review.value|default:'' }}</textarea>
+                            <p id="reviewError" class="text-red-400 text-xs mt-1 hidden">⚠️ La reseña debe tener al menos 5 caracteres</p>
+                        </div>
 
                         <!-- Title y Rating -->
                         <div class="flex gap-4">
                             <div class="flex-1">
                                 <label class="text-gray-400 text-xs mb-1 block">Título</label>
-                                <input type="text" name="title" value="Reseña"
+                                <input type="text" name="title" value="{{ movie_review_form.title.value|default:'Reseña' }}" id="titleInput"
                                     class="w-full bg-[#374151] text-white rounded-lg px-3 py-2 text-sm border border-gray-600 focus:outline-none focus:border-gray-400">
+                                <p id="titleError" class="text-red-400 text-xs mt-1 hidden">⚠️ El título es obligatorio</p>
                             </div>
                             <div class="w-28">
                                 <label class="text-gray-400 text-xs mb-1 block">Rating (1-100)</label>
-                                <input type="number" name="rating" min="1" max="100"
+                                <input type="number" name="rating" min="1" max="100" value="{{ movie_review_form.rating.value|default:'' }}" id="ratingInput"
                                     class="w-full bg-[#374151] text-white rounded-lg px-3 py-2 text-sm border border-gray-600 focus:outline-none focus:border-gray-400">
+                                <p id="ratingError" class="text-red-400 text-xs mt-1 hidden">⚠️ Rating 1-100 requerido</p>
                             </div>
                         </div>
 
@@ -53,8 +78,8 @@
                         <div class="flex items-center justify-end gap-3 mt-auto">
                             <button type="button" _="on click trigger closeModal"
                                 class="text-sm text-gray-400 hover:text-white">Cancelar</button>
-                            <button type="submit"
-                                class="bg-green-500 hover:bg-green-400 text-white text-sm font-bold px-6 py-2 rounded-lg uppercase tracking-wide">
+                            <button type="submit" id="submitBtn"
+                                class="bg-green-500 hover:bg-green-400 text-white text-sm font-bold px-6 py-2 rounded-lg uppercase tracking-wide transition-all">
                                 Save
                             </button>
                         </div>
@@ -65,4 +90,71 @@
             </div>
         </div>
     </div>
+
+    <!-- Script de validación -->
+    <script>
+        const reviewText = document.getElementById('reviewText');
+        const titleInput = document.getElementById('titleInput');
+        const ratingInput = document.getElementById('ratingInput');
+        const charCount = document.getElementById('charCount');
+        const reviewError = document.getElementById('reviewError');
+        const titleError = document.getElementById('titleError');
+        const ratingError = document.getElementById('ratingError');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('reviewForm');
+
+        // Validación en tiempo real del textarea
+        reviewText.addEventListener('input', function() {
+            const length = this.value.length;
+            const isValid = length >= 5;
+            
+            charCount.textContent = `${length}/5 caracteres mínimos`;
+            charCount.className = isValid ? 'text-xs text-green-400' : 'text-xs text-gray-500';
+            
+            reviewError.classList.toggle('hidden', isValid || length === 0);
+            this.classList.toggle('border-red-500', !isValid && length > 0);
+            this.classList.toggle('border-green-500', isValid);
+        });
+
+        // Validación del título
+        titleInput.addEventListener('input', function() {
+            const isValid = this.value.trim().length > 0;
+            titleError.classList.toggle('hidden', isValid);
+            this.classList.toggle('border-red-500', !isValid);
+        });
+
+        // Validación del rating
+        ratingInput.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            const isValid = value >= 1 && value <= 100;
+            ratingError.classList.toggle('hidden', isValid || this.value === '');
+            this.classList.toggle('border-red-500', !isValid && this.value !== '');
+        });
+
+        // Validación antes de enviar
+        form.addEventListener('submit', function(e) {
+            const reviewValid = reviewText.value.length >= 5;
+            const titleValid = titleInput.value.trim().length > 0;
+            const ratingValue = parseInt(ratingInput.value);
+            const ratingValid = ratingValue >= 1 && ratingValue <= 100;
+
+            if (!reviewValid || !titleValid || !ratingValid) {
+                e.preventDefault();
+                
+                // Mostrar errores
+                reviewError.classList.toggle('hidden', reviewValid);
+                titleError.classList.toggle('hidden', titleValid);
+                ratingError.classList.toggle('hidden', ratingValid);
+                
+                // Bordes rojos
+                reviewText.classList.toggle('border-red-500', !reviewValid);
+                titleInput.classList.toggle('border-red-500', !titleValid);
+                ratingInput.classList.toggle('border-red-500', !ratingValid);
+                
+                // Shake animation al botón
+                submitBtn.classList.add('animate-shake');
+                setTimeout(() => submitBtn.classList.remove('animate-shake'), 500);
+            }
+        });
+    </script>
 </div>

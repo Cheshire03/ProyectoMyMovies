@@ -33,7 +33,7 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG', default=True)
 
-ALLOWED_HOSTS = ['54.174.117.12', '127.0.0.1']
+ALLOWED_HOSTS = ['54.174.117.12', '127.0.0.1', 'localhost']
 print(ALLOWED_HOSTS)
 
 
