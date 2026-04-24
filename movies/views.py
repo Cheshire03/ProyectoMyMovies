@@ -6,6 +6,7 @@ from movies.utils import get_dominant_color
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import Q
+import random
 
 
 User = get_user_model()
@@ -31,7 +32,17 @@ def saludo(request,veces):
 def index(request):
     movies = Movie.objects.order_by('-release_date')
     recommended_movies = get_simple_recommendations(limit=8)
-    context = { 'movies':movies,'recommended_movies': recommended_movies, 'message':'welcome' }
+
+    random_movie = None
+    if movies.exists():
+        random_movie = random.choice(list(movies))
+
+    context = {
+        'movies': movies,
+        'recommended_movies': recommended_movies,
+        'random_movie': random_movie
+    }
+
     return render(request,'movies/index.html', context=context )
     
 def person(request, person_id):

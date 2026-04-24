@@ -1,6 +1,70 @@
 {% extends "movies/base.html" %} {% block content %}
 
+{% if random_movie %}
+<div class="relative w-full h-[75vh] mb-12 overflow-hidden">
+
+  <!-- BACKDROP -->
+  <img 
+    src="https://image.tmdb.org/t/p/w1920_and_h800_multi_faces{{ random_movie.backdrop_path }}"
+    class="absolute w-full h-full object-cover scale-110 blur-[1px]"
+  />
+
+  <!-- OVERLAY GRADIENTE -->
+  <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-black/70 to-transparent"></div>
+
+  <!-- CONTENIDO -->
+  <div class="relative z-10 h-full flex items-center px-6 sm:px-10">
+
+    <div class="max-w-2xl text-white">
+
+      <!-- TAG -->
+      <span class="bg-indigo-600 text-xs px-3 py-1 rounded-full uppercase tracking-wide">
+        Featured Movie
+      </span>
+
+      <!-- TÍTULO -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mt-4 leading-tight">
+        {{ random_movie.title }}
+      </h1>
+
+      <!-- META INFO -->
+      <p class="text-gray-400 mt-2 text-sm">
+        {{ random_movie.release_date }} • {{ random_movie.running_time }} min
+      </p>
+
+      <!-- DESCRIPCIÓN -->
+      <p class="text-gray-300 mt-4 mb-6 line-clamp-3 text-base sm:text-lg">
+        {{ random_movie.overview }}
+      </p>
+
+      <!-- BOTONES -->
+      <div class="flex flex-wrap gap-3">
+
+        <a href="/movies/{{ random_movie.id }}"
+           class="bg-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-indigo-500 transition shadow-lg">
+          ▶ Ver ahora
+        </a>
+
+        <a href="/movies/{{ random_movie.id }}"
+           class="bg-white/10 backdrop-blur px-6 py-2 rounded-lg font-semibold hover:bg-white/20 transition border border-white/20">
+          ℹ Más info
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GRADIENTE INFERIOR PARA TRANSICIÓN -->
+  <div class="absolute bottom-0 w-full h-32 bg-gradient-to-t from-[#0f172a] to-transparent"></div>
+
+</div>
+{% endif %}
+
 <div class="container mx-auto px-4 py-6 lg:px-16 lg:pt-10">
+  <h2 class="text-2xl font-bold text-white mb-6">
+    Movies
+  </h2>
   <!-- GRID PRINCIPAL -->
   <div
     id="artworks-container"
